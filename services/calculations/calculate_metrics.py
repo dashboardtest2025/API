@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from services.utils import jalali_to_gregorian, safe_divide
+from services.utils import jalali_to_gregorian, safe_divide, TARGET
 
 
 def calculate_metrics(df: pd.DataFrame, start_date: str, end_date: str) -> dict:
@@ -45,8 +45,11 @@ def calculate_metrics(df: pd.DataFrame, start_date: str, end_date: str) -> dict:
     bargashti_kol = bargashti_sanad_shode + bargashti_sanad_nashode
 
     # --- عملکردها ---
-    performance_nashode = safe_divide(vosool_sanad_nashode, bargashti_sanad_nashode) * 100
-    performance_shode = safe_divide(vosool_sanad_shode, bargashti_sanad_shode) * 100
+    performance_nashode = safe_divide(vosool_sanad_nashode, bargashti_kol) * 100
+    performance_shode = safe_divide(vosool_sanad_shode, bargashti_kol) * 100
+
+    # --- نحقق پلن کل ---
+    performance_target = safe_divide(TARGET["وصول مطالبات"], bargashti_kol) * 100
 
     return {
         "total_collection": float(vosool_kol),
@@ -57,4 +60,5 @@ def calculate_metrics(df: pd.DataFrame, start_date: str, end_date: str) -> dict:
         "returned_not_documented": float(bargashti_sanad_nashode),
         "performance_not_documented": float(performance_nashode),
         "performance_documented": float(performance_shode),
+        "performance_target": float(performance_target)
     }
