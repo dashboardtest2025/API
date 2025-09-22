@@ -1,0 +1,9 @@
+uvicorn
+pandas
+jdatetime
+requests
+python-multipart
+fastapi
+numpy
+openpyxl
+
