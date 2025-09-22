@@ -1,10 +1,10 @@
-# app.py
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from services.data_loader import load_data
 import services.calculations as calculations
 from services.utils import calculate_and_respond
+from services.calculations.get_dashboard_data import get_dashboard_data
 
 app = FastAPI(title="Finance Dashboard API")
 
@@ -19,14 +19,12 @@ app.add_middleware(
 # Load your main dataframe once
 df = load_data()
 
-
 @app.get("/")
 def root():
     return {
         "message": "Finance Dashboard API is running!",
         "available_functions": [f for f in dir(calculations) if not f.startswith("_")]
     }
-
 
 @app.get("/calculate")
 async def calculate_get(request: Request):
@@ -49,7 +47,6 @@ async def calculate_get(request: Request):
         return {"function": function_name, "params": params, "result": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/calculate")
 async def calculate_post(request: Request):
@@ -86,6 +83,5 @@ async def dashboard(request: Request):
     if not start_date or not end_date:
         raise HTTPException(status_code=400, detail="Missing dates")
 
-    # get_dashboard_data فعلا در حالت تست است
     result = get_dashboard_data(df, start_date, end_date)
     return result
